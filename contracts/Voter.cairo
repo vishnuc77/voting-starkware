@@ -68,6 +68,7 @@ func get_voting_state{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashB
 end
 
 @external
+@external
 func finalize_poll{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}(
         poll_id : felt):
     alloc_locals
@@ -82,14 +83,14 @@ func finalize_poll{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuil
     local syscall_ptr : felt* = syscall_ptr
     local pedersen_ptr : HashBuiltin* = pedersen_ptr
 
-    let (result1) = is_le(n_no_votes, n_yes_votes)
+    let (result) = is_le(n_no_votes, n_yes_votes)
     # Demonstrate Cairo short strings. "Yes" == int.from_bytes("Yes".encode("ascii"), "big").
-    let result2 = (result1 * 'Yes') + ((1 - result1) * 'No')
+    # let result = (result * 'Yes') + ((1 - result) * 'No')
 
     # Record the poll result in a ResultRecorder contract.
-    let (result) = ResultRecorder.get_poll_result(result_recorder_address, poll_id)
-    assert result = 0
-    ResultRecorder.record(contract_address=result_recorder_address, poll_id=poll_id, result=result2)
+    let (result1) = ResultRecorder.get_poll_result(result_recorder_address, poll_id)
+    assert result1 = 0
+    ResultRecorder.record(contract_address=result_recorder_address, poll_id=poll_id, result=result)
     return ()
 end
 

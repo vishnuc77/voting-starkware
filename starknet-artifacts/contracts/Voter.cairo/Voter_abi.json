@@ -43,10 +43,6 @@
                 "type": "felt"
             },
             {
-                "name": "voter_public_key",
-                "type": "felt"
-            },
-            {
                 "name": "vote",
                 "type": "felt"
             }

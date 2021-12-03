@@ -83,3 +83,7 @@ p {
   text-decoration: none;
   font-size: 17px;
 }
+
+:disabled {
+  background: #dddddd;
+}

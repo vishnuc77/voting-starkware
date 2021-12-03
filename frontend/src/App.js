@@ -1,6 +1,7 @@
 import React from "react";
 import { getStarknet } from "@argent/get-starknet"
 import { useState } from "react";
+import './App.css';
 
 import { stark, compileCalldata } from 'starknet';
 
@@ -13,6 +14,10 @@ const RESULT_ADDRESS ="0x05ff5e16caf8a8be54655be16f4560d37a6986451376dcea236888c
     const [ voteIndex, setVoteIndex ] = useState(0);
     const [ tx, setTx ] = useState(0);
     const [ voterAddress, setVoterAddress ] = useState(0);
+    const [ txHash, setTxHash ] = useState(0);
+    const [ visibility, setVisibility ] = useState(false);
+    const [ txStatus, setTxStatus ] = useState("");
+    const [ txStatusVisibility, setTxStatusVisibility ] = useState(false);
 
     async function initiate () {
       if (!pollId) return
@@ -32,6 +37,8 @@ const RESULT_ADDRESS ="0x05ff5e16caf8a8be54655be16f4560d37a6986451376dcea236888c
       )
       console.log(initPollResponse);
       console.log(initPollResponse.transaction_hash);
+      setVisibility(true);
+      setTxHash(initPollResponse.transaction_hash)
     }
 
     async function registerVoter () {
@@ -48,11 +55,13 @@ const RESULT_ADDRESS ="0x05ff5e16caf8a8be54655be16f4560d37a6986451376dcea236888c
 
       const registerVoterResponse = await starknet.signer.invokeFunction (
         VOTER_ADDRESS,
-        registerVoterResponse,
+        registerVoterSelector,
         voteDataHash,
       )
       console.log(registerVoterResponse);
       console.log(registerVoterResponse.transaction_hash);
+      setVisibility(true);
+      setTxHash(registerVoterResponse.transaction_hash);
     }
 
     async function vote () {
@@ -74,9 +83,12 @@ const RESULT_ADDRESS ="0x05ff5e16caf8a8be54655be16f4560d37a6986451376dcea236888c
       )
       console.log(voteResponse);
       console.log(voteResponse.transaction_hash);
+      setVisibility(true);
+      setTxHash(voteResponse.transaction_hash);
     }
 
     async function getVotingState () {
+      setVisibility(false);
       if (!pollId) return
       const callDataHash = compileCalldata({"poll_id":pollId});
 
@@ -107,16 +119,19 @@ const RESULT_ADDRESS ="0x05ff5e16caf8a8be54655be16f4560d37a6986451376dcea236888c
 
       const finalizeSelector = stark.getSelectorFromName("finalize_poll");
 
-      const initPollResponse = await starknet.signer.invokeFunction (
+      const finalizeResponse = await starknet.signer.invokeFunction (
         VOTER_ADDRESS,
         finalizeSelector,
         callDataHash,
       )
-      console.log(initPollResponse);
-      console.log(initPollResponse.transaction_hash);
+      console.log(finalizeResponse);
+      console.log(finalizeResponse.transaction_hash);
+      setVisibility(true);
+      setTxHash(finalizeResponse.transaction_hash);
     }
 
     async function getResult () {
+      setVisibility(false);
       if (!pollId) return
       const callDataHash = compileCalldata({"poll_id":pollId});
 
@@ -136,6 +151,7 @@ const RESULT_ADDRESS ="0x05ff5e16caf8a8be54655be16f4560d37a6986451376dcea236888c
     }
 
     async function getTransactionStatus () {
+      setVisibility(false);
       if (!tx) return
       const starknet = getStarknet();
       await starknet.enable()
@@ -144,26 +160,35 @@ const RESULT_ADDRESS ="0x05ff5e16caf8a8be54655be16f4560d37a6986451376dcea236888c
 
       const status = await starknet.provider.getTransactionStatus(tx);
       console.log(status.tx_status);
+      setTxStatusVisibility(true);
+      setTxStatus(status.tx_status);
     }
     
     return (
-      <div>
-        <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />
-        <button onClick={initiate}>Initiate Poll</button><br/>
-        <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />
-        <input type="text" onChange={e => setVoterAddress(e.target.value)} placeholder="Voter address" />
-        <button onClick={registerVoter}>Register voter</button><br/>
-        <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />
-        <input type="text" onChange={e => setVoteIndex(e.target.value)} placeholder="0 or 1" />
-        <button onClick={vote}>Vote</button><br/>
-        <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />
-        <button onClick={getVotingState}>Get Voting State</button><br/>
-        <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />
-        <button onClick={finalize}>Finalize poll</button><br/>
-        <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />
-        <button onClick={getResult}>Get result</button><br/><br/>
-        <input type="text" onChange={e => setTx(e.target.value)} placeholder="TX hash" />
-        <button onClick={getTransactionStatus}>Get transaction status</button>
+      <div className="App">
+        <div className="topnav">
+            <a><strong>VOTING DAPP STARKWARE</strong></a>
+        </div>
+        <header className="App-header">
+          <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />&nbsp;
+          <button className="button" onClick={initiate}>Initiate Poll</button><br/>
+          <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />&nbsp;
+          <input type="text" onChange={e => setVoterAddress(e.target.value)} placeholder="Voter address" />&nbsp;
+          <button className="button" onClick={registerVoter}>Register voter</button><br/>
+          <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />&nbsp;
+          <input type="text" onChange={e => setVoteIndex(e.target.value)} placeholder="0 or 1" />&nbsp;
+          <button className="button" onClick={vote}>Vote</button><br/>
+          <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />&nbsp;
+          <button className="button" onClick={getVotingState}>Get Voting State</button><br/>
+          <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />&nbsp;
+          <button className="button" onClick={finalize}>Finalize poll</button><br/>
+          <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />&nbsp;
+          <button className="button" onClick={getResult}>Get result</button><br/><br/>
+          { visibility && <p>Transaction hash: {txHash}</p> }
+          <input type="text" onChange={e => setTx(e.target.value)} placeholder="TX hash" />&nbsp;
+          <button className="button" onClick={getTransactionStatus}>Get transaction status</button>
+          { txStatusVisibility && <p>Transaction status: {txStatus}</p> }
+        </header>
       </div>
     );
   }

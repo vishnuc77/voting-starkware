@@ -16,7 +16,7 @@
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -35,4 +35,51 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.button {
+  background-color: #008cba;
+  border: 1px solid #008cba;
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline;
+  font-size: 15px;
+  transition-duration: 0.4s;
+  width: 200px;
+  overflow: hidden;
+}
+
+.button:hover {
+  background-color: white; /* Green */
+  color: black;
+  cursor: pointer;
+}
+
+input[type='text'] {
+  width: 100px;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+p {
+  color: green;
+  font-size: 15px;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
 }

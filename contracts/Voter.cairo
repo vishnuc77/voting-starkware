@@ -71,14 +71,16 @@ end
 @external
 func vote{
         syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*,
-        ecdsa_ptr : SignatureBuiltin*}(poll_id : felt, voter_public_key : felt, vote : felt):
+        ecdsa_ptr : SignatureBuiltin*}(poll_id : felt, vote : felt):
+    let (msg_sender) = get_caller_address()
     # Verify the vote.
-    verify_vote(poll_id=poll_id, voter_public_key=voter_public_key, vote=vote)
+    verify_vote(poll_id=poll_id, voter_public_key=msg_sender, vote=vote)
+    let (msg_sender) = get_caller_address()
 
     # Vote.
     let (current_n_votes) = voting_state.read(poll_id=poll_id, answer=vote)
     voting_state.write(poll_id=poll_id, answer=vote, value=current_n_votes + 1)
-    voter_state.write(poll_id=poll_id, voter_public_key=voter_public_key, value=1)
+    voter_state.write(poll_id=poll_id, voter_public_key=msg_sender, value=1)
     return ()
 end
 

@@ -28,6 +28,25 @@
                 "type": "felt"
             },
             {
+                "name": "voter_public_key",
+                "type": "felt"
+            }
+        ],
+        "name": "register_voter",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "poll_id",
+                "type": "felt"
+            },
+            {
+                "name": "voter_public_key",
+                "type": "felt"
+            },
+            {
                 "name": "vote",
                 "type": "felt"
             }

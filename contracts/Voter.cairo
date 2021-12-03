@@ -34,6 +34,10 @@ end
 func result_recorder() -> (contract_address : felt):
 end
 
+@storage_var
+func registered_voters(poll_id : felt, voter_public_key : felt) -> (is_registered : felt):
+end
+
 # API functions.
 
 @external
@@ -48,14 +52,33 @@ func init_poll{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*
 end
 
 @external
+func register_voter{
+        syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*,
+        ecdsa_ptr : SignatureBuiltin*}(poll_id : felt, voter_public_key : felt):
+    let (owner_public_key) = poll_owner_public_key.read(poll_id=poll_id)
+    # Verify that the poll is initialized.
+    assert_not_zero(owner_public_key)
+
+    # Verify that caller is same as the person who initiated the poll
+    let (msg_sender) = get_caller_address()
+    assert owner_public_key = msg_sender
+
+    # Register voter.
+    registered_voters.write(poll_id=poll_id, voter_public_key=voter_public_key, value=1)
+    return ()
+end
+
+@external
 func vote{
         syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*,
-        ecdsa_ptr : SignatureBuiltin*}(poll_id : felt, vote : felt):
+        ecdsa_ptr : SignatureBuiltin*}(poll_id : felt, voter_public_key : felt, vote : felt):
+    # Verify the vote.
+    verify_vote(poll_id=poll_id, voter_public_key=voter_public_key, vote=vote)
+
     # Vote.
-    let (msg_sender) = get_caller_address()
     let (current_n_votes) = voting_state.read(poll_id=poll_id, answer=vote)
     voting_state.write(poll_id=poll_id, answer=vote, value=current_n_votes + 1)
-    voter_state.write(poll_id=poll_id, voter_public_key=msg_sender, value=1)
+    voter_state.write(poll_id=poll_id, voter_public_key=voter_public_key, value=1)
     return ()
 end
 
@@ -67,7 +90,24 @@ func get_voting_state{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashB
     return (n_no_votes=n_no_votes, n_yes_votes=n_yes_votes)
 end
 
-@external
+# Private helpers.
+func verify_vote{
+        pedersen_ptr : HashBuiltin*, syscall_ptr : felt*, ecdsa_ptr : SignatureBuiltin*,
+        range_check_ptr}(poll_id : felt, voter_public_key : felt, vote : felt):
+    # Verify that the vote value is legal, i.e., 0 or 1.
+    assert (vote - 0) * (vote - 1) = 0
+
+    let (is_registered) = registered_voters.read(poll_id=poll_id, voter_public_key=voter_public_key)
+    # Verify that the voter is registered.
+    assert_not_zero(is_registered)
+
+    # Verify that the voter has not voted for this poll yet.
+    let (has_voted) = voter_state.read(poll_id=poll_id, voter_public_key=voter_public_key)
+    assert has_voted = 0
+
+    return ()
+end
+
 @external
 func finalize_poll{syscall_ptr : felt*, range_check_ptr, pedersen_ptr : HashBuiltin*}(
         poll_id : felt):

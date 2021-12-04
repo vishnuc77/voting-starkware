@@ -27,10 +27,13 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
       const callDataHash = compileCalldata({"poll_id":pollId});
 
       const starknet = getStarknet();
-      await starknet.enable()
-      if (starknet.isConnected === false)
-        throw Error("starknet wallet not connected")
-
+      try {
+        await starknet.enable()  
+      } catch (error) {
+        window.alert("Please install Argent X wallet browser extension");
+        return
+      }
+      
       const initSelector = stark.getSelectorFromName("init_poll");
 
       const initPollResponse = await starknet.signer.invokeFunction (
@@ -52,9 +55,12 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
       const voteDataHash = compileCalldata({"poll_id":pollId, "vote": voterAddress});
 
       const starknet = getStarknet();
-      await starknet.enable()
-      if (starknet.isConnected === false)
-        throw Error("starknet wallet not connected")
+      try {
+        await starknet.enable()  
+      } catch (error) {
+        window.alert("Please install Argent X wallet browser extension");
+        return
+      }
 
       const registerVoterSelector = stark.getSelectorFromName("register_voter");
 
@@ -76,9 +82,12 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
       const voteDataHash = compileCalldata({"poll_id":pollId, "vote": voteIndex});
 
       const starknet = getStarknet();
-      await starknet.enable()
-      if (starknet.isConnected === false)
-        throw Error("starknet wallet not connected")
+      try {
+        await starknet.enable()  
+      } catch (error) {
+        window.alert("Please install Argent X wallet browser extension");
+        return
+      }
 
       const initSelector = stark.getSelectorFromName("vote");
 
@@ -100,9 +109,12 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
       const callDataHash = compileCalldata({"poll_id":pollId});
 
       const starknet = getStarknet();
-      await starknet.enable()
-      if (starknet.isConnected === false)
-        throw Error("starknet wallet not connected")
+      try {
+        await starknet.enable()  
+      } catch (error) {
+        window.alert("Please install Argent X wallet browser extension");
+        return
+      }
 
       const getVotingStateSelector = stark.getSelectorFromName("get_voting_state");
 
@@ -122,9 +134,12 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
       const callDataHash = compileCalldata({"poll_id":pollId});
 
       const starknet = getStarknet();
-      await starknet.enable()
-      if (starknet.isConnected === false)
-        throw Error("starknet wallet not connected")
+      try {
+        await starknet.enable()  
+      } catch (error) {
+        window.alert("Please install Argent X wallet browser extension");
+        return
+      }
 
       const finalizeSelector = stark.getSelectorFromName("finalize_poll");
 
@@ -146,9 +161,12 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
       const callDataHash = compileCalldata({"poll_id":pollId});
 
       const starknet = getStarknet();
-      await starknet.enable()
-      if (starknet.isConnected === false)
-        throw Error("starknet wallet not connected")
+      try {
+        await starknet.enable()  
+      } catch (error) {
+        window.alert("Please install Argent X wallet browser extension");
+        return
+      }
 
       const getResultSelector = stark.getSelectorFromName("get_poll_result");
 
@@ -187,6 +205,9 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
       <div className="App">
         <div className="topnav">
             <a><strong>VOTING DAPP - STARKWARE</strong></a>
+            <div className="right">
+              <a><em>Argent X wallet extension is required for this app to work</em></a>
+            </div>
         </div>
         <header className="App-header"> <br />
           <center>* Please don't send new transactions until last transaction status becomes ACCEPTED_ONCHAIN</center><br />
@@ -207,9 +228,13 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
           <button className="button" onClick={getResult}>Get result</button><br/><br/>
           { resultVisibility && <p>Result of pollID {pollId}: {result}</p> }
           { visibility && <p>Transaction hash: {txHash}</p> }
-          {/* <input type="text" onChange={e => setTx(e.target.value)} placeholder="TX hash" />&nbsp;
-          <button className="button" onClick={getTransactionStatus}>Get transaction status</button> */}
           { txStatusVisibility && <p>Transaction status: <b>{txStatus}</b></p> }
+          <br/>
+          <p className="p1">
+              Transactions will be rejected if:<br/>
+              * Poll ID already exists for 'Initiate Poll'<br/>
+              * Voter is not registered for 'Vote'
+          </p>
         </header>
       </div>
     );

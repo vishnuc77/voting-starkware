@@ -1,14 +1,13 @@
-## Interacting with voting contract deployed in goerli
+## Interacting with voting contract deployed in goerli Starkware
 
-## Does NOT use r and s values
 
 ## Prerequisites
 
-1. node
+* Node
 
 ## Get it running
 
-1. Install the required npm packages and compile Cairo contracts
+1. Install the required npm packages
    `npm install`
 
 2. Compile and Deploy the contracts
@@ -30,8 +29,6 @@ Also change VOTER_ADDRESS and RESULT_ADDRESS in app.js
 npm start
 ```
 
-4. Get Argent X
+4. [Install Argent X](https://github.com/argentlabs/argent-x#-install-from-sources)
 
-```
-https://github.com/argentlabs/argent-x#-install-from-sources
-```
+

@@ -6,8 +6,8 @@ import './App.css';
 import { stark, compileCalldata } from 'starknet';
 
 
-const VOTER_ADDRESS ="0x00e5bf6520f82336d78f1082550f58cf037efa6e01fa6e8b66384af68720b083";
-const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63b80313a50";
+const VOTER_ADDRESS ="0x047a7bf7f2bee1e26f0b7b8dcca09527f2599a04965dfd46d907008a5a700904";
+const RESULT_ADDRESS ="0x029ef849f3bf0bbe77c3085d7038611aef5bd70838dc07650b62e45d6aa00511";
 
   function App() {
     const [ pollId, setPollId ] = useState(0);
@@ -46,6 +46,7 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
       setVisibility(true);
       setTxHash(initPollResponse.transaction_hash);
       setResultVisibility(false);
+      setVotingStateVisibility(false);
       getTransactionStatus(initPollResponse.transaction_hash);
     }
 
@@ -226,7 +227,7 @@ const RESULT_ADDRESS ="0x022ac0cd7c8c00d0202c3f2bc7e209421b253d963bca7d451ba5d63
           <button className="button" onClick={finalize}>Finalize poll</button><br/>
           <input type="text" onChange={e => setPollId(e.target.value)} placeholder="Poll ID" />&nbsp;
           <button className="button" onClick={getResult}>Get result</button><br/><br/>
-          { resultVisibility && <p>Result of pollID {pollId}: {result}</p> }
+          { resultVisibility && <p>Result of poll ID {pollId}: {result}</p> }
           { visibility && <p>Transaction hash: {txHash}</p> }
           { txStatusVisibility && <p>Transaction status: <b>{txStatus}</b></p> }
           <br/>
